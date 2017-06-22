@@ -12,7 +12,7 @@ npm install node-locker
 
 ## Usage
 
-```javasript
+```javascript
 const Locker = require('node-locker');
 const locker = new Locker({ /* redis config */ });
 
