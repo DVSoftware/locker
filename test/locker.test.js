@@ -144,7 +144,6 @@ describe('Locker tests', () => {
 	it('should unlock in lock order', () => {
 		const locker = new Locker();
 		const resolve = jest.fn((id) => {
-			console.log(id);	
 			return Promise.resolve(id)
 		});
 		const unlock = jest.fn(() => Promise.resolve());
@@ -167,5 +166,55 @@ describe('Locker tests', () => {
 			expect(result).toBe('test');
 		});
 	});
-	
+
+	it('should not reject on resolved process', () => {
+		const locker = new Locker();
+		const resolve = jest.fn(() => Promise.resolve());
+		const reject = jest.fn(() => Promise.resolve());
+		
+		locker.lock('locker:lock1', () => {
+			return Promise.resolve();
+		}).then(resolve, reject);
+		
+		return new Promise((res) => {
+			setTimeout(() => {
+				expect(reject).not.toBeCalled();
+				res();
+			}, 100);
+		});
+	});
+
+	it('should not resolve on exception', () => {
+		const locker = new Locker();
+		const resolve = jest.fn(() => Promise.resolve());
+		const reject = jest.fn(() => Promise.resolve());
+
+		locker.lock('locker:lock1', () => {
+			throw new Error('Error');
+		}).then(resolve, reject);
+
+		return new Promise((res) => {
+			setTimeout(() => {
+				expect(resolve).not.toBeCalled();
+				res();
+			}, 100);
+		});
+	});
+
+	it('should not resolve on rejected process', () => {
+		const locker = new Locker();
+		const resolve = jest.fn(() => Promise.resolve());
+		const reject = jest.fn(() => Promise.resolve());
+
+		locker.lock('locker:lock1', () => {
+			return Promise.reject('error');
+		}).then(resolve, reject);
+
+		return new Promise((res) => {
+			setTimeout(() => {
+				expect(resolve).not.toBeCalled();
+				res();
+			}, 100);
+		});
+	});
 });
