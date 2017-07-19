@@ -1,6 +1,6 @@
 {
   "name": "node-locker",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Simple Redis locking that doesn't use polling",
   "main": "index.js",
   "scripts": {
